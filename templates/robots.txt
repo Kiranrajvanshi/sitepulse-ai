@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /report/*/print
+
+Sitemap: https://sitepulse-ai.example.com/sitemap.xml

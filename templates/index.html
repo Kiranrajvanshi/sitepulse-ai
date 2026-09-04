@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}SitePulse AI — Understand Your Website. Improve Your Performance.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center" id="analyze">
+  <div class="hero-glow"></div>
+  <div class="container hero-content">
+    
+    <!-- Hero Badge -->
+    <div class="hero-badge">
+      <i class="bi bi-stars"></i>
+      <span>Next-Generation Website Health & Performance Intelligence</span>
+    </div>
+
+    <!-- Main Headline -->
+    <h1 class="hero-title">
+      Understand Your Website.<br>
+      <span class="gradient-text">Improve Your Performance.</span>
+    </h1>
+
+    <!-- Subheading -->
+    <p class="hero-subtitle">
+      Analyze your website's performance, SEO, accessibility, and technical health from one simple, unified SaaS dashboard.
+    </p>
+
+    <!-- URL Analyzer Form -->
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        <form id="analyzerForm" class="analyzer-card" novalidate>
+          <div class="analyzer-input-group">
+            <i class="bi bi-globe2 analyzer-icon"></i>
+            <input 
+              type="text" 
+              class="form-control analyzer-input" 
+              id="websiteUrlInput" 
+              placeholder="Enter website URL (e.g. stripe.com or https://example.com)" 
+              autocomplete="url"
+              spellcheck="false"
+              required
+            >
+            <button type="submit" class="btn btn-pulse" id="analyzeSubmitBtn">
+              <i class="bi bi-speedometer2"></i>
+              <span>Analyze Website</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Inline Validation Error Message -->
+        <div id="analyzerError" class="alert alert-danger mt-3 py-2 px-3 text-start small" style="display: none; border-radius: 10px;"></div>
+
+        <!-- Quick Sample Chips -->
+        <div class="quick-samples">
+          <span class="me-1"><i class="bi bi-magic me-1"></i> Try sample:</span>
+          <a href="#" class="sample-chip" data-url="https://stripe.com">stripe.com</a>
+          <a href="#" class="sample-chip" data-url="https://github.com">github.com</a>
+          <a href="#" class="sample-chip" data-url="https://example.com">example.com</a>
+          <a href="#" class="sample-chip" data-url="https://wikipedia.org">wikipedia.org</a>
+        </div>
+
+        <!-- Feature Badges -->
+        <div class="feature-badges-row">
+          <div class="badge-item">
+            <i class="bi bi-lightning-charge-fill"></i>
+            <span>Performance Analysis</span>
+          </div>
+          <div class="badge-item">
+            <i class="bi bi-search"></i>
+            <span>SEO Diagnostics</span>
+          </div>
+          <div class="badge-item">
+            <i class="bi bi-universal-access"></i>
+            <span>Accessibility Checks</span>
+          </div>
+          <div class="badge-item">
+            <i class="bi bi-activity"></i>
+            <span>Core Web Vitals</span>
+          </div>
+          <div class="badge-item">
+            <i class="bi bi-check2-circle"></i>
+            <span>Actionable Fixes</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5" style="border-top: 1px solid var(--border-subtle);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="text-uppercase small fw-bold text-primary tracking-wider">Comprehensive Auditing</span>
+      <h2 class="fw-bold mt-2">Engineered For Total Technical Visibility</h2>
+      <p class="text-muted mx-auto" style="max-width: 600px;">
+        Everything you need to troubleshoot slow load times, search indexing bottlenecks, and accessibility violations.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Feature 1: Performance -->
+      <div class="col-lg-4 col-md-6">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-icon-box perf">
+              <i class="bi bi-speedometer"></i>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border">Speed</span>
+          </div>
+          <h4 class="h5 fw-bold mb-2">Performance Analysis</h4>
+          <p class="text-muted small mb-0">
+            Real-world simulation of mobile & desktop delivery speeds, measuring render-blocking resources, payload compression, and asset delivery bottlenecks.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 2: SEO -->
+      <div class="col-lg-4 col-md-6">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-icon-box seo">
+              <i class="bi bi-search"></i>
+            </div>
+            <span class="badge bg-success-subtle text-success border">Organic</span>
+          </div>
+          <h4 class="h5 fw-bold mb-2">Search Engine Optimization</h4>
+          <p class="text-muted small mb-0">
+            Inspects title tags, meta descriptions, heading structures, canonical links, robots.txt, sitemaps, and mobile viewport responsiveness.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 3: Accessibility -->
+      <div class="col-lg-4 col-md-6">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-icon-box a11y">
+              <i class="bi bi-universal-access"></i>
+            </div>
+            <span class="badge bg-info-subtle text-info border">WCAG 2.1</span>
+          </div>
+          <h4 class="h5 fw-bold mb-2">Accessibility Checks</h4>
+          <p class="text-muted small mb-0">
+            Automated audits based on WCAG standards checking color contrast ratios, alt tags, ARIA attributes, and semantic form labeling.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 4: Core Web Vitals -->
+      <div class="col-lg-4 col-md-6">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-icon-box perf">
+              <i class="bi bi-activity"></i>
+            </div>
+            <span class="badge bg-warning-subtle text-warning border">Google Metrics</span>
+          </div>
+          <h4 class="h5 fw-bold mb-2">Core Web Vitals</h4>
+          <p class="text-muted small mb-0">
+            Direct tracking of LCP, INP, CLS, FCP, and TTFB benchmarks against Google's strict ranking thresholds.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 5: Best Practices -->
+      <div class="col-lg-4 col-md-6">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-icon-box bp">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <span class="badge bg-warning-subtle text-warning border">Security</span>
+          </div>
+          <h4 class="h5 fw-bold mb-2">Best Practices Audit</h4>
+          <p class="text-muted small mb-0">
+            Checks for HTTPS enforcement, modern image format delivery (AVIF/WebP), HSTS, doctype validity, and browser console warnings.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 6: Actionable Recommendations -->
+      <div class="col-lg-4 col-md-6">
+        <div class="pillar-card">
+          <div class="pillar-header">
+            <div class="pillar-icon-box a11y">
+              <i class="bi bi-award"></i>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border">Action Plan</span>
+          </div>
+          <h4 class="h5 fw-bold mb-2">Actionable Recommendations</h4>
+          <p class="text-muted small mb-0">
+            Prioritized issues ranked by severity (Critical, High, Medium, Low) with concrete engineering solutions and estimated performance gains.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5" style="background-color: var(--bg-secondary);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="text-uppercase small fw-bold text-primary tracking-wider">Workflow</span>
+      <h2 class="fw-bold mt-2">How SitePulse AI Works</h2>
+      <p class="text-muted mx-auto" style="max-width: 550px;">
+        Four simple steps from URL submission to an executive technical health audit.
+      </p>
+    </div>
+
+    <div class="row g-4 text-center">
+      <!-- Step 1 -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="p-4 rounded-4 h-100" style="background: var(--bg-card); border: 1px solid var(--border-card);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 52px; height: 52px; background: rgba(99, 102, 241, 0.15); color: var(--primary); font-weight: 800; font-size: 1.25rem;">
+            1
+          </div>
+          <h5 class="fw-bold mb-2">Enter Website</h5>
+          <p class="text-muted small mb-0">
+            Input any public domain or URL. SitePulse automatically verifies protocol, SSL, and DNS reachability.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="p-4 rounded-4 h-100" style="background: var(--bg-card); border: 1px solid var(--border-card);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 52px; height: 52px; background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); font-weight: 800; font-size: 1.25rem;">
+            2
+          </div>
+          <h5 class="fw-bold mb-2">Analyze</h5>
+          <p class="text-muted small mb-0">
+            Our multi-layer engine queries Google PageSpeed Insights and directly parses the HTML DOM structure.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="p-4 rounded-4 h-100" style="background: var(--bg-card); border: 1px solid var(--border-card);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 52px; height: 52px; background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); font-weight: 800; font-size: 1.25rem;">
+            3
+          </div>
+          <h5 class="fw-bold mb-2">Understand Issues</h5>
+          <p class="text-muted small mb-0">
+            Review your overall Health Score, interactive issue tables, and Core Web Vitals benchmark radar charts.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="p-4 rounded-4 h-100" style="background: var(--bg-card); border: 1px solid var(--border-card);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 52px; height: 52px; background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); font-weight: 800; font-size: 1.25rem;">
+            4
+          </div>
+          <h5 class="fw-bold mb-2">Improve Website</h5>
+          <p class="text-muted small mb-0">
+            Follow prioritized recommendations with specific technical remediation steps to accelerate your site.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why SitePulse AI Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="text-uppercase small fw-bold text-primary tracking-wider">Advantage</span>
+      <h2 class="fw-bold mt-2">Why SitePulse AI?</h2>
+      <p class="text-muted mx-auto" style="max-width: 550px;">
+        Designed for developers, founders, and digital teams who demand honest, uninflated metrics.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3 col-md-6">
+        <div class="content-card h-100 mb-0">
+          <div class="text-primary fs-3 mb-3"><i class="bi bi-shield-lock"></i></div>
+          <h5 class="fw-bold mb-2">Google PageSpeed Powered</h5>
+          <p class="text-muted small mb-0">
+            Backed by official Lighthouse audits and Google Chrome User Experience data for real-world fidelity.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="content-card h-100 mb-0">
+          <div class="text-success fs-3 mb-3"><i class="bi bi-eye"></i></div>
+          <h5 class="fw-bold mb-2">Honest Reporting</h5>
+          <p class="text-muted small mb-0">
+            No manufactured vanity scores. Live data is explicitly distinguished from Demo mode with total transparency.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="content-card h-100 mb-0">
+          <div class="text-warning fs-3 mb-3"><i class="bi bi-file-earmark-arrow-down"></i></div>
+          <h5 class="fw-bold mb-2">Exportable Audits</h5>
+          <p class="text-muted small mb-0">
+            Download crisp, print-ready reports or share live audits via one-click link sharing.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <div class="content-card h-100 mb-0">
+          <div class="text-info fs-3 mb-3"><i class="bi bi-clock-history"></i></div>
+          <h5 class="fw-bold mb-2">Audit History Log</h5>
+          <p class="text-muted small mb-0">
+            Track site optimizations over time with our built-in SQLite persistence layer and audit archive.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+  <div class="container text-center py-3">
+    <h3 class="fw-bold mb-2">Ready to test your website's health?</h3>
+    <p class="text-muted mb-4">Run an instant diagnostic audit now. No registration or credit card required.</p>
+    <a href="#analyze" class="btn btn-pulse px-4 py-2" onclick="document.getElementById('websiteUrlInput').focus();">
+      <i class="bi bi-lightning-charge-fill me-1"></i> Start Free Analysis
+    </a>
+  </div>
+</section>
+{% endblock %}

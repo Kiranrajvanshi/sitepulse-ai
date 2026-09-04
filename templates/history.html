@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Audit History — SitePulse AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  
+  <!-- Page Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+      <span class="text-uppercase small fw-bold text-primary tracking-wider">Audit Archive</span>
+      <h1 class="h3 fw-bold mt-1 mb-0">Analysis History</h1>
+      <p class="text-muted small mb-0">Stored locally in SQLite. Track website improvements and review historical reports.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="{{ url_for('index') }}" class="btn btn-sm btn-pulse">
+        <i class="bi bi-plus-lg me-1"></i> New Analysis
+      </a>
+      {% if analyses and analyses | length > 0 %}
+      <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#clearHistoryModal" id="clearAllHistoryBtn">
+        <i class="bi bi-trash3 me-1"></i> Clear History
+      </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- History Content -->
+  {% if analyses and analyses | length > 0 %}
+  <div class="content-card" id="historyTableContainer">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" style="color: var(--text-main);">
+        <thead>
+          <tr class="text-muted small text-uppercase" style="border-color: var(--border-card);">
+            <th style="width: 32%;">Target Website</th>
+            <th>Date & Time</th>
+            <th>Overall</th>
+            <th>Breakdown (P / S / A / B)</th>
+            <th>Type</th>
+            <th class="text-end" style="width: 15%;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          {% for a in analyses %}
+          <tr id="history-row-{{ a.id }}" style="border-color: var(--border-subtle);">
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-globe text-primary"></i>
+                <div>
+                  <a href="{{ url_for('view_report', analysis_id=a.id) }}" class="fw-bold text-decoration-none" style="color: var(--text-main);">
+                    {{ a.domain }}
+                  </a>
+                  <div class="text-muted small text-truncate" style="max-width: 300px;">{{ a.url }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="small text-muted">{{ a.created_at }}</div>
+            </td>
+            <td>
+              {% set ovr = a.overall_score %}
+              <span class="badge fs-6 {% if ovr >= 90 %}bg-success{% elif ovr >= 75 %}bg-info text-dark{% elif ovr >= 50 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                {{ a.overall_score }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex gap-1 small">
+                <span class="badge bg-body-tertiary border text-muted" title="Performance: {{ a.performance_score }}">P: {{ a.performance_score }}</span>
+                <span class="badge bg-body-tertiary border text-muted" title="SEO: {{ a.seo_score }}">S: {{ a.seo_score }}</span>
+                <span class="badge bg-body-tertiary border text-muted" title="Accessibility: {{ a.accessibility_score }}">A: {{ a.accessibility_score }}</span>
+                <span class="badge bg-body-tertiary border text-muted" title="Best Practices: {{ a.best_practices_score }}">B: {{ a.best_practices_score }}</span>
+              </div>
+            </td>
+            <td>
+              {% if a.is_demo %}
+              <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Demo</span>
+              {% else %}
+              <span class="badge bg-success-subtle text-success border border-success-subtle">Live</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <a href="{{ url_for('view_report', analysis_id=a.id) }}" class="btn btn-outline-primary" title="View Audit Report">
+                  <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <button class="btn btn-outline-danger delete-history-btn" data-id="{{ a.id }}" data-domain="{{ a.domain }}" title="Delete this entry">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="historyEmptyState" class="content-card text-center py-5" style="display: none;">
+    <i class="bi bi-clock-history fs-1 text-muted mb-3 d-block"></i>
+    <h4 class="h5 fw-bold mb-1">No Analysis History</h4>
+    <p class="text-muted small mb-3">You haven't run any website health audits yet or all history was cleared.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-pulse">
+      <i class="bi bi-speedometer2 me-1"></i> Run First Analysis
+    </a>
+  </div>
+
+  {% else %}
+  <!-- Initial Empty State -->
+  <div class="content-card text-center py-5">
+    <i class="bi bi-clock-history fs-1 text-muted mb-3 d-block"></i>
+    <h4 class="h5 fw-bold mb-1">No Analysis History Yet</h4>
+    <p class="text-muted small mb-3">Audits you perform will be archived here for easy tracking and comparison.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-pulse">
+      <i class="bi bi-speedometer2 me-1"></i> Analyze a Website Now
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Clear History Confirmation Modal -->
+<div class="modal fade" id="clearHistoryModal" tabindex="-1" aria-labelledby="clearHistoryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-danger" id="clearHistoryModalLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>Clear Entire Audit History?
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-muted">
+        Are you sure you want to permanently delete all archived website reports from the database? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger btn-sm" id="confirmClearHistoryBtn">Yes, Clear All History</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}

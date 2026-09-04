@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}About SitePulse AI — Architecture, Methodology & Technology{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+  
+  <!-- Header -->
+  <div class="text-center mb-5">
+    <span class="text-uppercase small fw-bold text-primary tracking-wider">Engineering Architecture</span>
+    <h1 class="h2 fw-bold mt-2">About SitePulse AI</h1>
+    <p class="text-muted mx-auto" style="max-width: 650px;">
+      A production-grade, developer-oriented website health analyzer engineered to provide clear, actionable visibility into website performance, search engine readiness, accessibility compliance, and Core Web Vitals.
+    </p>
+  </div>
+
+  <!-- Section 1: What SitePulse AI Does -->
+  <div class="content-card mb-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="pillar-icon-box perf"><i class="bi bi-bullseye"></i></div>
+      <h3 class="h5 fw-bold mb-0">What SitePulse AI Does</h3>
+    </div>
+    <p class="text-muted">
+      SitePulse AI simulates real-world browser loading conditions and conducts rigorous static and runtime audits on any public URL. Rather than delivering abstract or artificially inflated "vanity metrics," SitePulse translates raw technical telemetry into four foundational pillars:
+    </p>
+    <div class="row g-3 mt-2">
+      <div class="col-sm-6">
+        <div class="p-3 rounded bg-body-tertiary">
+          <strong class="d-block mb-1 text-main"><i class="bi bi-speedometer2 text-primary me-1"></i> Performance</strong>
+          <span class="small text-muted">Payload efficiency, server response times (TTFB), and render-blocking resources.</span>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="p-3 rounded bg-body-tertiary">
+          <strong class="d-block mb-1 text-main"><i class="bi bi-search text-success me-1"></i> SEO Quality</strong>
+          <span class="small text-muted">Title, meta description, heading structure, canonical tags, robots.txt, and sitemaps.</span>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="p-3 rounded bg-body-tertiary">
+          <strong class="d-block mb-1 text-main"><i class="bi bi-universal-access text-info me-1"></i> Accessibility</strong>
+          <span class="small text-muted">WCAG 2.1 AA conformance: color contrast ratios, alt text, and semantic ARIA landmarks.</span>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="p-3 rounded bg-body-tertiary">
+          <strong class="d-block mb-1 text-main"><i class="bi bi-shield-check text-warning me-1"></i> Best Practices</strong>
+          <span class="small text-muted">HTTPS enforcement, modern image formats (AVIF/WebP), HSTS, and valid HTML doctype.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: How Analysis Works -->
+  <div class="content-card mb-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="pillar-icon-box a11y"><i class="bi bi-cpu"></i></div>
+      <h3 class="h5 fw-bold mb-0">How The Audit Engine Works</h3>
+    </div>
+    <p class="text-muted">
+      SitePulse AI combines two analytical layers to produce reliable diagnostics:
+    </p>
+    <ol class="text-muted small ps-3 mb-0" style="line-height: 1.8;">
+      <li class="mb-2">
+        <strong class="text-main">Direct Server Probe:</strong> The backend initiates an HTTP request directly to the target host to measure real Time to First Byte (TTFB), verify SSL/TLS certificate validity, inspect server compression (Brotli/Gzip), verify HTTP headers (HSTS, CSP), and parse HTML elements like title length, meta description, heading hierarchy, and image alt tags.
+      </li>
+      <li class="mb-2">
+        <strong class="text-main">Google PageSpeed Insights API:</strong> The backend queries Google's official PageSpeed Insights REST API running on Google Lighthouse v11+. This generates lab simulation benchmarks for Core Web Vitals including Largest Contentful Paint (LCP), Interaction to Next Paint (INP), Cumulative Layout Shift (CLS), and First Contentful Paint (FCP).
+      </li>
+    </ol>
+  </div>
+
+  <!-- Section 3: Difference Between Live and Demo Analysis -->
+  <div class="content-card mb-4" id="demo-vs-live">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="pillar-icon-box bp"><i class="bi bi-toggles"></i></div>
+      <h3 class="h5 fw-bold mb-0">Live Analysis vs. Demo Mode</h3>
+    </div>
+    <p class="text-muted">
+      Integrity is a core principle of SitePulse AI. The platform never fabricates or presents synthetic mock data as live telemetry:
+    </p>
+    <div class="table-responsive">
+      <table class="table table-bordered small align-middle mb-0" style="color: var(--text-main); border-color: var(--border-subtle);">
+        <thead>
+          <tr class="bg-body-tertiary">
+            <th>Capability</th>
+            <th><span class="badge bg-success">Live Analysis Mode</span></th>
+            <th><span class="badge bg-warning text-dark">Demo Mode</span></th>
+          </tr>
+        </thead>
+        <tbody class="text-muted">
+          <tr>
+            <td><strong>API Key Requirement</strong></td>
+            <td>Configured <code>PAGESPEED_API_KEY</code> in <code>.env</code> (or free public quota)</td>
+            <td>No API key needed (works out-of-the-box)</td>
+          </tr>
+          <tr>
+            <td><strong>Core Web Vitals</strong></td>
+            <td>Real Google Lighthouse lab/field measurements</td>
+            <td>Realistic deterministic domain-based sample data</td>
+          </tr>
+          <tr>
+            <td><strong>Direct DOM & SSL Check</strong></td>
+            <td>Active real-time probe against target domain</td>
+            <td>Active direct probe enriched with sample audits</td>
+          </tr>
+          <tr>
+            <td><strong>Report Disclosure</strong></td>
+            <td>Labeled with <span class="badge bg-success-subtle text-success">Verified Live</span></td>
+            <td>Clearly marked with <span class="badge bg-warning-subtle text-warning">Demo Mode</span> banner</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 4: Technology Stack -->
+  <div class="content-card mb-4">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <div class="pillar-icon-box seo"><i class="bi bi-stack"></i></div>
+      <h3 class="h5 fw-bold mb-0">Technology Stack</h3>
+    </div>
+    <p class="text-muted small mb-3">
+      SitePulse AI was intentionally engineered without complex SPA frameworks (React, Next.js, or Tailwind CSS) to highlight clean foundational web standards, readability, and solid backend architectural design:
+    </p>
+    <div class="row g-2">
+      <div class="col-md-6">
+        <div class="p-2 px-3 rounded bg-body-tertiary d-flex align-items-center justify-content-between">
+          <span class="small fw-semibold text-main">Backend Framework</span>
+          <span class="badge bg-primary-subtle text-primary">Python 3 & Flask</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-2 px-3 rounded bg-body-tertiary d-flex align-items-center justify-content-between">
+          <span class="small fw-semibold text-main">Database Layer</span>
+          <span class="badge bg-primary-subtle text-primary">SQLite 3 (Parameterized)</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-2 px-3 rounded bg-body-tertiary d-flex align-items-center justify-content-between">
+          <span class="small fw-semibold text-main">Frontend UI</span>
+          <span class="badge bg-primary-subtle text-primary">HTML5, CSS3, Bootstrap 5</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-2 px-3 rounded bg-body-tertiary d-flex align-items-center justify-content-between">
+          <span class="small fw-semibold text-main">Data Visualizations</span>
+          <span class="badge bg-primary-subtle text-primary">Chart.js (Radar Benchmarks)</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-2 px-3 rounded bg-body-tertiary d-flex align-items-center justify-content-between">
+          <span class="small fw-semibold text-main">Production Server</span>
+          <span class="badge bg-primary-subtle text-primary">Gunicorn WSGI</span>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="p-2 px-3 rounded bg-body-tertiary d-flex align-items-center justify-content-between">
+          <span class="small fw-semibold text-main">External Auditing API</span>
+          <span class="badge bg-primary-subtle text-primary">Google PageSpeed Insights v5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to Audit CTA -->
+  <div class="text-center mt-5">
+    <a href="{{ url_for('index') }}#analyze" class="btn btn-pulse px-4 py-2">
+      <i class="bi bi-speedometer2 me-1"></i> Analyze a Website Now
+    </a>
+  </div>
+
+</div>
+{% endblock %}

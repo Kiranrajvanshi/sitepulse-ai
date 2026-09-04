@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block title %}{{ analysis.domain }} — Website Health Audit | SitePulse AI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Demo vs Live Analysis Banner -->
+  {% if analysis.is_demo %}
+  <div class="demo-banner">
+    <div class="d-flex align-items-center gap-3">
+      <span class="demo-badge">Demo Mode</span>
+      <div class="small">
+        <strong class="text-warning">Live analysis is unavailable. Showing sample analysis data.</strong>
+        <span class="d-none d-md-inline text-muted ms-1">To enable live PageSpeed audits, configure <code>PAGESPEED_API_KEY</code> in your <code>.env</code> file.</span>
+      </div>
+    </div>
+    <a href="{{ url_for('about') }}#demo-vs-live" class="btn btn-sm btn-outline-warning d-none d-sm-inline-flex align-items-center gap-1">
+      <i class="bi bi-info-circle"></i> Learn More
+    </a>
+  </div>
+  {% else %}
+  <div class="alert alert-success d-flex align-items-center justify-content-between py-2 px-3 mb-4 rounded-3" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.25);">
+    <div class="d-flex align-items-center gap-2 small">
+      <span class="live-badge">Live Analysis</span>
+      <span class="text-success fw-medium">Real-time audit verified via Google PageSpeed Insights & direct DOM inspection.</span>
+    </div>
+    <span class="badge bg-success-subtle text-success border">Lighthouse v11+</span>
+  </div>
+  {% endif %}
+
+  <!-- Dashboard Header & Top Actions -->
+  <div class="dashboard-header">
+    <div class="row align-items-center g-3">
+      <div class="col-lg-7 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-globe2 text-primary fs-4"></i>
+          <h2 class="h4 fw-bold mb-0 text-break">{{ analysis.url }}</h2>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-3 text-muted small mt-2">
+          <span><i class="bi bi-calendar3 me-1"></i> {{ analysis.created_at }}</span>
+          <span><i class="bi bi-hdd-network me-1"></i> Host: {{ analysis.domain }}</span>
+          {% if analysis.is_demo %}
+          <span class="text-warning"><i class="bi bi-shield-exclamation me-1"></i> Sample Audit</span>
+          {% else %}
+          <span class="text-success"><i class="bi bi-shield-check me-1"></i> Verified Live</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-5 col-md-6 text-md-end">
+        <div class="d-flex flex-wrap justify-content-md-end gap-2">
+          <!-- Analyze Again Button -->
+          <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary" id="analyzeAgainBtn">
+            <i class="bi bi-arrow-clockwise me-1"></i> Analyze Again
+          </a>
+          <!-- Share Report Button -->
+          <button class="btn btn-sm btn-outline-primary" id="shareReportBtn" title="Share or copy report link">
+            <i class="bi bi-share me-1"></i> Share Report
+          </button>
+          <!-- Download Report Button -->
+          <button class="btn btn-sm btn-pulse" id="downloadReportBtn" title="Print or save as PDF">
+            <i class="bi bi-file-earmark-arrow-down me-1"></i> Download Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overall Score & Four Core Pillars -->
+  <div class="row g-4 mb-4">
+    <!-- Circular Overall Score Card -->
+    <div class="col-lg-4">
+      <div class="overall-score-card">
+        <span class="text-uppercase small fw-bold text-muted tracking-wider mb-2">Overall Website Health</span>
+        
+        <div class="circular-gauge">
+          <svg>
+            <circle class="gauge-bg" cx="85" cy="85" r="70"></circle>
+            <circle class="gauge-progress" id="gaugeCircle" cx="85" cy="85" r="70"></circle>
+          </svg>
+          <div class="gauge-value">
+            <div class="gauge-number" id="overallScoreValue" data-score="{{ analysis.overall_score }}">{{ analysis.overall_score }}</div>
+            <div class="gauge-total">/ 100</div>
+          </div>
+        </div>
+
+        {% set ovr = analysis.overall_score %}
+        {% if ovr >= 90 %}
+        <span class="status-pill status-excellent mb-2">Excellent Health</span>
+        <p class="text-muted small mb-0 text-center">Your site adheres to modern performance, SEO, and accessibility benchmarks.</p>
+        {% elif ovr >= 75 %}
+        <span class="status-pill status-good mb-2">Good Condition</span>
+        <p class="text-muted small mb-0 text-center">Solid foundational architecture with minor optimization opportunities available.</p>
+        {% elif ovr >= 50 %}
+        <span class="status-pill status-warning mb-2">Needs Improvement</span>
+        <p class="text-muted small mb-0 text-center">Identified speed bottlenecks and technical violations affecting search ranking.</p>
+        {% else %}
+        <span class="status-pill status-poor mb-2">Poor Health</span>
+        <p class="text-muted small mb-0 text-center">Critical performance, SEO, or accessibility deficiencies require immediate remediation.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Four Core Pillars Cards -->
+    <div class="col-lg-8">
+      <div class="row g-3 h-100">
+        
+        <!-- Performance Card -->
+        <div class="col-sm-6">
+          <div class="pillar-card">
+            <div class="pillar-header">
+              <div class="pillar-icon-box perf"><i class="bi bi-speedometer2"></i></div>
+              {% set p = analysis.performance_score %}
+              {% if p >= 90 %}<span class="status-pill status-excellent">Excellent</span>
+              {% elif p >= 75 %}<span class="status-pill status-good">Good</span>
+              {% elif p >= 50 %}<span class="status-pill status-warning">Needs Improvement</span>
+              {% else %}<span class="status-pill status-poor">Poor</span>{% endif %}
+            </div>
+            <div class="text-muted small fw-bold text-uppercase">Performance</div>
+            <div class="d-flex align-items-baseline gap-1 my-1">
+              <span class="pillar-score">{{ analysis.performance_score }}</span>
+              <span class="text-muted small">/ 100</span>
+            </div>
+            <p class="text-muted small mb-0">Rendering velocity, resource delivery, and script execution speeds.</p>
+            <div class="custom-progress">
+              <div class="custom-progress-bar" style="width: {{ analysis.performance_score }}%; background-color: {% if p >= 90 %}#10B981{% elif p >= 75 %}#06B6D4{% elif p >= 50 %}#F59E0B{% else %}#EF4444{% endif %};"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEO Card -->
+        <div class="col-sm-6">
+          <div class="pillar-card">
+            <div class="pillar-header">
+              <div class="pillar-icon-box seo"><i class="bi bi-search"></i></div>
+              {% set s = analysis.seo_score %}
+              {% if s >= 90 %}<span class="status-pill status-excellent">Excellent</span>
+              {% elif s >= 75 %}<span class="status-pill status-good">Good</span>
+              {% elif s >= 50 %}<span class="status-pill status-warning">Needs Improvement</span>
+              {% else %}<span class="status-pill status-poor">Poor</span>{% endif %}
+            </div>
+            <div class="text-muted small fw-bold text-uppercase">SEO Quality</div>
+            <div class="d-flex align-items-baseline gap-1 my-1">
+              <span class="pillar-score">{{ analysis.seo_score }}</span>
+              <span class="text-muted small">/ 100</span>
+            </div>
+            <p class="text-muted small mb-0">Search engine discoverability, metadata tags, and crawler indexing rules.</p>
+            <div class="custom-progress">
+              <div class="custom-progress-bar" style="width: {{ analysis.seo_score }}%; background-color: {% if s >= 90 %}#10B981{% elif s >= 75 %}#06B6D4{% elif s >= 50 %}#F59E0B{% else %}#EF4444{% endif %};"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accessibility Card -->
+        <div class="col-sm-6">
+          <div class="pillar-card">
+            <div class="pillar-header">
+              <div class="pillar-icon-box a11y"><i class="bi bi-universal-access"></i></div>
+              {% set a = analysis.accessibility_score %}
+              {% if a >= 90 %}<span class="status-pill status-excellent">Excellent</span>
+              {% elif a >= 75 %}<span class="status-pill status-good">Good</span>
+              {% elif a >= 50 %}<span class="status-pill status-warning">Needs Improvement</span>
+              {% else %}<span class="status-pill status-poor">Poor</span>{% endif %}
+            </div>
+            <div class="text-muted small fw-bold text-uppercase">Accessibility</div>
+            <div class="d-flex align-items-baseline gap-1 my-1">
+              <span class="pillar-score">{{ analysis.accessibility_score }}</span>
+              <span class="text-muted small">/ 100</span>
+            </div>
+            <p class="text-muted small mb-0">WCAG 2.1 compliance, contrast ratios, and screen reader affordances.</p>
+            <div class="custom-progress">
+              <div class="custom-progress-bar" style="width: {{ analysis.accessibility_score }}%; background-color: {% if a >= 90 %}#10B981{% elif a >= 75 %}#06B6D4{% elif a >= 50 %}#F59E0B{% else %}#EF4444{% endif %};"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Best Practices Card -->
+        <div class="col-sm-6">
+          <div class="pillar-card">
+            <div class="pillar-header">
+              <div class="pillar-icon-box bp"><i class="bi bi-shield-check"></i></div>
+              {% set b = analysis.best_practices_score %}
+              {% if b >= 90 %}<span class="status-pill status-excellent">Excellent</span>
+              {% elif b >= 75 %}<span class="status-pill status-good">Good</span>
+              {% elif b >= 50 %}<span class="status-pill status-warning">Needs Improvement</span>
+              {% else %}<span class="status-pill status-poor">Poor</span>{% endif %}
+            </div>
+            <div class="text-muted small fw-bold text-uppercase">Best Practices</div>
+            <div class="d-flex align-items-baseline gap-1 my-1">
+              <span class="pillar-score">{{ analysis.best_practices_score }}</span>
+              <span class="text-muted small">/ 100</span>
+            </div>
+            <p class="text-muted small mb-0">Modern web standards, HTTPS security, image formats, and clean console.</p>
+            <div class="custom-progress">
+              <div class="custom-progress-bar" style="width: {{ analysis.best_practices_score }}%; background-color: {% if b >= 90 %}#10B981{% elif b >= 75 %}#06B6D4{% elif b >= 50 %}#F59E0B{% else %}#EF4444{% endif %};"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Web Vitals Section -->
+  <div class="content-card mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div>
+        <h3 class="h5 fw-bold mb-1"><i class="bi bi-activity text-primary me-2"></i>Core Web Vitals</h3>
+        <p class="text-muted small mb-0">Google's essential UX metrics that directly influence search rankings and user satisfaction.</p>
+      </div>
+      <span class="badge bg-secondary-subtle text-secondary border">Real-world Field & Lab Metrics</span>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="row g-3 mb-4">
+      {% for key, metric in analysis.metrics.items() %}
+      <div class="col-lg col-md-4 col-sm-6">
+        <div class="cwv-card">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="cwv-abbr text-primary">{{ key }}</span>
+            <span class="cwv-badge {% if metric.status == 'Good' %}bg-success-subtle text-success border border-success-subtle{% elif metric.status == 'Needs Improvement' %}bg-warning-subtle text-warning border border-warning-subtle{% else %}bg-danger-subtle text-danger border border-danger-subtle{% endif %}">
+              {{ metric.status }}
+            </span>
+          </div>
+          <div class="cwv-value mb-1">{{ metric.value }}</div>
+          <div class="text-muted" style="font-size: 0.78rem; font-weight: 600;">{{ metric.name }}</div>
+          <p class="text-muted small mt-2 mb-2" style="font-size: 0.8rem; min-height: 48px;">{{ metric.explanation }}</p>
+          <div class="p-2 rounded bg-body-tertiary small text-muted" style="font-size: 0.75rem;">
+            <strong>Fix:</strong> {{ metric.suggestion }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Chart.js Benchmark Visualization -->
+    <div class="p-3 rounded-3" style="background: var(--bg-secondary); border: 1px solid var(--border-subtle);">
+      <div class="text-muted small fw-bold mb-3 text-center">Core Web Vitals Radar Benchmark vs Google "Good" Thresholds</div>
+      <div style="height: 300px; position: relative;">
+        <canvas id="cwvChart" 
+          data-lcp="{{ analysis.metrics.LCP.raw_value }}"
+          data-inp="{{ analysis.metrics.INP.raw_value }}"
+          data-cls="{{ analysis.metrics.CLS.raw_value }}"
+          data-fcp="{{ analysis.metrics.FCP.raw_value }}"
+          data-ttfb="{{ analysis.metrics.TTFB.raw_value }}"
+        ></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three Pillar Deep-Dives: SEO, Accessibility, Best Practices -->
+  <div class="row g-4 mb-4">
+    
+    <!-- SEO Checks -->
+    <div class="col-lg-4">
+      <div class="content-card h-100 mb-0">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h4 class="h6 fw-bold mb-0"><i class="bi bi-search text-success me-2"></i>SEO Audit Breakdown</h4>
+          <span class="badge bg-success-subtle text-success">{{ analysis.seo_score }}/100</span>
+        </div>
+        <div class="check-list">
+          {% for check in analysis.summary.seo_checks %}
+          <div class="check-item">
+            <i class="bi {% if check.status == 'Passed' %}bi-check-circle-fill check-icon passed{% elif check.status == 'Warning' %}bi-exclamation-triangle-fill check-icon warning{% else %}bi-x-circle-fill check-icon failed{% endif %}"></i>
+            <div>
+              <div class="fw-semibold small">{{ check.name }}</div>
+              <div class="text-muted small">{{ check.details }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessibility Checks -->
+    <div class="col-lg-4">
+      <div class="content-card h-100 mb-0">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h4 class="h6 fw-bold mb-0"><i class="bi bi-universal-access text-info me-2"></i>Accessibility Checklist</h4>
+          <span class="badge bg-info-subtle text-info">{{ analysis.accessibility_score }}/100</span>
+        </div>
+        <div class="check-list">
+          {% for check in analysis.summary.accessibility_checks %}
+          <div class="check-item">
+            <i class="bi {% if check.status == 'Passed' %}bi-check-circle-fill check-icon passed{% elif check.status == 'Warning' %}bi-exclamation-triangle-fill check-icon warning{% else %}bi-x-circle-fill check-icon failed{% endif %}"></i>
+            <div>
+              <div class="fw-semibold small">{{ check.name }}</div>
+              <div class="text-muted small">{{ check.details }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Best Practices Checks -->
+    <div class="col-lg-4">
+      <div class="content-card h-100 mb-0">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h4 class="h6 fw-bold mb-0"><i class="bi bi-shield-check text-warning me-2"></i>Best Practices Audits</h4>
+          <span class="badge bg-warning-subtle text-warning">{{ analysis.best_practices_score }}/100</span>
+        </div>
+        <div class="check-list">
+          {% for check in analysis.summary.best_practices_checks %}
+          <div class="check-item">
+            <i class="bi {% if check.status == 'Passed' %}bi-check-circle-fill check-icon passed{% elif check.status == 'Warning' %}bi-exclamation-triangle-fill check-icon warning{% else %}bi-x-circle-fill check-icon failed{% endif %}"></i>
+            <div>
+              <div class="fw-semibold small">{{ check.name }}</div>
+              <div class="text-muted small">{{ check.details }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Priority Recommendations Section -->
+  <div class="content-card mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <div>
+        <h3 class="h5 fw-bold mb-1"><i class="bi bi-award text-primary me-2"></i>Actionable Recommendations</h3>
+        <p class="text-muted small mb-0">Prioritized engineering actions based on audit bottlenecks to maximize score gains.</p>
+      </div>
+      <span class="badge bg-primary-subtle text-primary border">Ranked by Severity</span>
+    </div>
+
+    {% set high_prio_issues = analysis.issues | selectattr('severity', 'in', ['Critical', 'High']) | list %}
+    {% set other_issues = analysis.issues | selectattr('severity', 'in', ['Medium', 'Low']) | list %}
+    
+    <div class="row g-3">
+      {% for issue in analysis.issues[:4] %}
+      <div class="col-md-6">
+        <div class="rec-card {{ issue.severity | lower }}">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-secondary-subtle text-secondary border small">{{ issue.category }}</span>
+            <span class="badge {% if issue.severity == 'Critical' %}bg-danger{% elif issue.severity == 'High' %}bg-warning text-dark{% else %}bg-info text-dark{% endif %}">
+              {{ issue.severity }} Priority
+            </span>
+          </div>
+          <h5 class="h6 fw-bold mb-1">{{ issue.title }}</h5>
+          <p class="text-muted small mb-2">{{ issue.recommendation }}</p>
+          <div class="d-flex align-items-center gap-1 text-success small fw-medium">
+            <i class="bi bi-arrow-up-right-circle"></i>
+            <span>{{ issue.benefit }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Interactive Issues Table -->
+  <div class="content-card mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+      <div>
+        <h3 class="h5 fw-bold mb-1"><i class="bi bi-list-check text-primary me-2"></i>Detailed Issue Explorer</h3>
+        <p class="text-muted small mb-0">Filter and search through detected issues. Click any row for in-depth remediation guidelines.</p>
+      </div>
+      <div class="badge bg-body-tertiary border text-muted px-3 py-2">
+        Showing <span id="visibleIssueCount" class="fw-bold text-main">{{ analysis.issues | length }}</span> detected audits
+      </div>
+    </div>
+
+    <!-- Filter & Search Controls -->
+    <div class="row g-2 filter-controls mb-3">
+      <div class="col-md-5">
+        <div class="input-group">
+          <span class="input-group-text bg-body-tertiary border-end-0"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" class="form-control search-input border-start-0" id="issueSearchInput" placeholder="Search issues (e.g. image, contrast, css)...">
+        </div>
+      </div>
+      <div class="col-md-4 col-6">
+        <select class="form-select filter-select" id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="Performance">Performance</option>
+          <option value="SEO">SEO</option>
+          <option value="Accessibility">Accessibility</option>
+          <option value="Best Practices">Best Practices</option>
+        </select>
+      </div>
+      <div class="col-md-3 col-6">
+        <select class="form-select filter-select" id="severityFilter">
+          <option value="all">All Severities</option>
+          <option value="Critical">Critical</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-responsive">
+      <table class="issue-table">
+        <thead>
+          <tr>
+            <th style="width: 42%;">Issue / Audit</th>
+            <th>Category</th>
+            <th>Severity</th>
+            <th>Impact</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="issueTableBody">
+          {% for issue in analysis.issues %}
+          <tr class="issue-row" 
+              data-title="{{ issue.title }}" 
+              data-category="{{ issue.category }}" 
+              data-severity="{{ issue.severity }}"
+              data-description="{{ issue.description }}"
+              data-recommendation="{{ issue.recommendation }}"
+              data-benefit="{{ issue.benefit }}"
+              title="Click to view full diagnosis">
+            <td>
+              <div class="fw-semibold">{{ issue.title }}</div>
+              <div class="text-muted small text-truncate" style="max-width: 480px;">{{ issue.description }}</div>
+            </td>
+            <td>
+              <span class="badge bg-body-tertiary border text-muted">{{ issue.category }}</span>
+            </td>
+            <td>
+              <span class="severity-{{ issue.severity | lower }}">{{ issue.severity }}</span>
+            </td>
+            <td>
+              <span class="badge bg-secondary-subtle text-secondary">{{ issue.impact }}</span>
+            </td>
+            <td>
+              <span class="status-pill {% if issue.status == 'Passed' %}status-excellent{% elif issue.status == 'Warning' %}status-warning{% else %}status-poor{% endif %}">
+                {{ issue.status }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Empty Filter State -->
+      <div id="noIssuesFound" class="text-center py-5 text-muted" style="display: none;">
+        <i class="bi bi-search fs-1 mb-2"></i>
+        <p class="mb-0">No matching issues found for the selected search/filter criteria.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Issue Detail Modal -->
+<div class="modal fade" id="issueDetailModal" tabindex="-1" aria-labelledby="modalIssueTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span class="badge bg-secondary me-2" id="modalIssueCategory">Performance</span>
+          <span class="badge bg-warning" id="modalIssueSeverity">High</span>
+          <h5 class="modal-title fw-bold mt-2" id="modalIssueTitle">Issue Title</h5>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <h6 class="text-uppercase small fw-bold text-muted">Problem Description</h6>
+          <p id="modalIssueProblem" class="small"></p>
+        </div>
+        <div class="mb-3 p-3 rounded bg-body-tertiary">
+          <h6 class="text-uppercase small fw-bold text-muted"><i class="bi bi-question-circle text-primary me-1"></i> Why It Matters</h6>
+          <p id="modalIssueWhy" class="small mb-0 text-muted"></p>
+        </div>
+        <div class="mb-3">
+          <h6 class="text-uppercase small fw-bold text-muted"><i class="bi bi-tools text-warning me-1"></i> Recommended Solution</h6>
+          <p id="modalIssueFix" class="small"></p>
+        </div>
+        <div class="p-2 rounded bg-success-subtle border border-success-subtle">
+          <span class="text-success small fw-semibold"><i class="bi bi-graph-up-arrow me-1"></i> Expected Benefit: </span>
+          <span id="modalIssueBenefit" class="text-success small"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{% block title %}SitePulse AI — Website Health Analyzer{% endblock %}</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="{% block meta_desc %}Analyze your website's performance, SEO, accessibility, and Core Web Vitals from one premium dashboard with SitePulse AI.{% endblock %}">
+  <meta name="keywords" content="website health analyzer, pagespeed insights, core web vitals, seo audit, accessibility checker, web performance">
+  <meta name="author" content="SitePulse AI">
+  <meta property="og:title" content="SitePulse AI — Website Health Analyzer">
+  <meta property="og:description" content="Get comprehensive performance, SEO, accessibility, and Core Web Vitals reports for any website.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ url_for('static', filename='images/logo.svg') }}">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <!-- SitePulse Custom Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}" media="print">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar navbar-expand-lg sitepulse-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('index') }}" id="navBrand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="SitePulse AI Logo" width="32" height="32">
+        <span>SitePulse <span class="brand-gradient">AI</span></span>
+        <span class="brand-badge">SaaS v1.0</span>
+      </a>
+
+      <button class="navbar-toggler border-0 text-white" type="button" data-bs-dismiss="collapse" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation" id="navbarToggleBtn">
+        <i class="bi bi-list fs-2 text-white"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}" id="navHome">
+              <i class="bi bi-house-door me-1"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'analyze_page' %}active{% endif %}" href="{{ url_for('index') }}#analyze" id="navAnalyze">
+              <i class="bi bi-speedometer2 me-1"></i> Analyze
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'history' %}active{% endif %}" href="{{ url_for('history') }}" id="navHistory">
+              <i class="bi bi-clock-history me-1"></i> History
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="{{ url_for('about') }}" id="navAbout">
+              <i class="bi bi-info-circle me-1"></i> About
+            </a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+          <!-- Theme Toggler -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+            <i class="bi bi-sun-fill" id="themeToggleIcon"></i>
+          </button>
+          
+          <!-- Primary Action Button -->
+          <a href="{{ url_for('index') }}#analyze" class="btn btn-sm btn-pulse" id="navQuickAnalyzeBtn">
+            <i class="bi bi-lightning-charge-fill"></i> New Audit
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Global Loading Sequence Modal -->
+  <div class="loading-overlay" id="loadingOverlay" role="dialog" aria-modal="true" aria-labelledby="loadingTitle">
+    <div class="loading-container">
+      <div class="pulse-spinner">
+        <div class="pulse-spinner-ring"></div>
+        <div class="pulse-spinner-core"></div>
+      </div>
+      <h4 id="loadingTitle" class="fw-bold mb-1">Analyzing Website Health</h4>
+      <p class="text-muted small mb-4" id="loadingTargetUrl">https://example.com</p>
+      
+      <!-- Step By Step Animated Progression -->
+      <div class="steps-wrapper text-start">
+        <div class="step-item" id="step-1">
+          <i class="bi bi-circle"></i> <span>Checking website connectivity...</span>
+        </div>
+        <div class="step-item" id="step-2">
+          <i class="bi bi-circle"></i> <span>Fetching performance metrics...</span>
+        </div>
+        <div class="step-item" id="step-3">
+          <i class="bi bi-circle"></i> <span>Analyzing SEO structure & tags...</span>
+        </div>
+        <div class="step-item" id="step-4">
+          <i class="bi bi-circle"></i> <span>Checking accessibility standards...</span>
+        </div>
+        <div class="step-item" id="step-5">
+          <i class="bi bi-circle"></i> <span>Processing Core Web Vitals...</span>
+        </div>
+        <div class="step-item" id="step-6">
+          <i class="bi bi-circle"></i> <span>Preparing your diagnostic report...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main View Container -->
+  <main class="flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Global Toast Notifications Area -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Modern SaaS Footer -->
+  <footer class="sitepulse-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="SitePulse AI" width="28" height="28">
+            <h5 class="mb-0 fw-bold">SitePulse <span class="brand-gradient">AI</span></h5>
+          </div>
+          <p class="text-muted mb-3" style="max-width: 380px;">
+            An engineering-grade website health diagnostic platform analyzing real-time performance, search engine optimization, web accessibility, and technical best practices.
+          </p>
+          <div class="d-flex gap-2">
+            <span class="badge bg-secondary-subtle text-secondary border">Python Flask</span>
+            <span class="badge bg-secondary-subtle text-secondary border">SQLite</span>
+            <span class="badge bg-secondary-subtle text-secondary border">Bootstrap 5</span>
+            <span class="badge bg-secondary-subtle text-secondary border">PageSpeed API</span>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-4 col-6">
+          <h6 class="text-white fw-bold mb-3">Platform</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="{{ url_for('index') }}" class="footer-link">Home</a></li>
+            <li class="mb-2"><a href="{{ url_for('index') }}#analyze" class="footer-link">Audit Website</a></li>
+            <li class="mb-2"><a href="{{ url_for('history') }}" class="footer-link">Analysis History</a></li>
+            <li class="mb-2"><a href="{{ url_for('about') }}" class="footer-link">About Engine</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-4 col-6">
+          <h6 class="text-white fw-bold mb-3">Audits</h6>
+          <ul class="list-unstyled">
+            <li class="mb-2"><span class="text-muted">Core Web Vitals</span></li>
+            <li class="mb-2"><span class="text-muted">SEO Diagnostics</span></li>
+            <li class="mb-2"><span class="text-muted">WCAG 2.1 A11y</span></li>
+            <li class="mb-2"><span class="text-muted">Security & HTTPS</span></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-4">
+          <h6 class="text-white fw-bold mb-3">Portfolio Project</h6>
+          <p class="text-muted small mb-2">
+            Engineered for high performance and architectural clarity. Built with pure HTML5, CSS3, Vanilla JS, and Flask.
+          </p>
+          <div class="text-muted small">
+            <i class="bi bi-shield-check text-success me-1"></i> Ready for production showcase.
+          </div>
+        </div>
+      </div>
+
+      <div class="border-top pt-3 d-flex flex-column flex-sm-row justify-content-between align-items-center text-muted small" style="border-color: var(--border-subtle) !important;">
+        <div>&copy; 2025 SitePulse AI. All rights reserved.</div>
+        <div class="mt-2 mt-sm-0">
+          <a href="{{ url_for('about') }}" class="footer-link me-3">Architecture & Docs</a>
+          <a href="{{ url_for('history') }}" class="footer-link">Audit Archive</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  
+  <!-- SitePulse Core JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
+  
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

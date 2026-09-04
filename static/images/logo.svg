@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40" fill="none">
+  <defs>
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#06B6D4" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.1" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Rounded Container -->
+  <rect x="2" y="2" width="36" height="36" rx="10" fill="url(#glowGrad)" stroke="url(#pulseGrad)" stroke-width="2" />
+  <!-- Pulse Line Graphic -->
+  <path d="M7 21 H13 L16 13 L21 27 L25 17 L28 21 H33" stroke="url(#pulseGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- AI Spark Dot -->
+  <circle cx="21" cy="27" r="2.5" fill="#06B6D4" />
+</svg>
